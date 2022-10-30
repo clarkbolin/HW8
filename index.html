@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>HW8 API Fun</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <style type="text/css">
+        body,
+        html {
+            font-size: 30px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #e2cc74;
+        }
+
+        .display {
+            padding: 20px;
+            border: 2px solid green;
+            margin: 40px;
+        }
+
+        a:hover {
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="color: green; text-align: center;">Breaking Bad Quotes</h1>
+    <div class="display" id="pt1" onclick="getQuotes()"><a>Click to display using ajax pattern</a></div>
+    <div class="display" id="pt2" onclick="fetchQuotes()"><a>Click to display using fetch</a></div>
+    <div class="display" id="questions">
+        <h3 style="color: green;">Questions:</h4>
+            The API I selected was Breaking Bad Quotes. It is an api that retrieves random quotes with their authors
+            (speakers) from the TV show Breaking Bad.
+            <p /><a href="https://breakingbadquotes.xyz/">Site Link</a>
+            <p />
+            For the first option, I used an API request with GET. This is the pattern that we went over in class, and it
+            consists of a request to the server, then verification of the status and that the request has been
+            fulfilled. Then, I accessed the json file, then parsed and displayed it. For the second option, I fetched
+            the data from the site, skipping all of the trivial steps of the first method, and then I accessed the text
+            of the json, parsed, and displayed it. This method was much easier than the first one because I was able to
+            skip all of the steps associated with the request. I prefer the fetch option.
+            <p />
+            One application of this API could be that if someone were building a breaking bad blog and they wanted to
+            display a quote on the home page of their blog. This api would allow the quote to be randomized and change
+            every time the site is reloaded. Another application of this API could be if a person is a huge fan of the
+            show and they wanted to add a quote to their homescreen on their computer. This could be a fun way to have
+            different random quotes pop up. Not super useful, but if I were having a bad day and a funny quote popped up
+            from my favorite show, my mood would be improved.
+            </p>
+            The most challenging thing about this assignment was actually getting the data to display in the correct
+            spot. When I did document.write instead of changing the innerHTML of my divs, I couldn't style anything and
+            headings were wiped. It was extremely satisfying to see the quotes displayed in their correct divs on the
+            page, while everything but the displayed quotes stayed the same. It was a fun assignment!
+    </div>
+
+    <script>
+
+        function getQuotes() {
+            var ajaxRequest = new XMLHttpRequest();
+            ajaxRequest.onreadystatechange = function () {
+                if (ajaxRequest.readyState == 4) {
+                    //the request is completed, now check its status
+                    if (ajaxRequest.status == 200) {
+                        var data = ajaxRequest.responseText;
+                        var quotes = JSON.parse(data);
+                        var toDisplay = "";
+                        for (i in quotes) {
+                            toDisplay += quotes[i].author;
+                            toDisplay += ": ";
+                            toDisplay += quotes[i].quote;
+                            toDisplay += "<p>";
+                        }
+                        document.getElementById("pt1").innerHTML = toDisplay;
+                    }
+                    else {
+                        console.log("Status error: " + ajaxRequest.status);
+                    }
+                }
+            }
+            ajaxRequest.open("GET", "https://api.breakingbadquotes.xyz/v1/quotes/7", true);
+            ajaxRequest.send();
+        }
+
+
+
+        function fetchQuotes() {
+            res = fetch("https://api.breakingbadquotes.xyz/v1/quotes/7")
+                .then(res => res.text())
+                .then(data => {
+                    var quotes = "";
+                    data = JSON.parse(data)
+                    for (i in data) {
+                        quotes += data[i].author;
+                        quotes += ": ";
+                        quotes += data[i].quote;
+                        quotes += "<p>";
+                    }
+                    document.getElementById("pt2").innerHTML = quotes;
+                })
+                .catch(error => console.log(error))
+        }
+    </script>
+</body>
+
+</html>
